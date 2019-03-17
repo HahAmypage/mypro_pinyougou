@@ -20,4 +20,29 @@ public interface BrandService {
      * 条件查询
      */
     PageResult search(Integer pageNo,Integer pageSize,Brand brand);
+
+    /**
+     * 新增品牌
+     * @param brand
+     */
+    void add(Brand brand);
+
+    /**
+     * 根据id查询品牌
+     * @param id
+     * @return
+     */
+    Brand findOne(Long id);
+
+    /**
+     * 更新品牌数据
+     * @param brand
+     */
+    void update(Brand brand);
+
+    /**
+     * 删除品牌信息
+     * @param id
+     */
+    void delete(Long[] id);
 }

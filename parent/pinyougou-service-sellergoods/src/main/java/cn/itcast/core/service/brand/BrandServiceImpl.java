@@ -7,9 +7,9 @@ import cn.itcast.core.pojo.good.BrandQuery;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,5 +69,49 @@ public class BrandServiceImpl implements BrandService {
         return pageResult;
     }
 
+    /**
+     * 新增品牌
+     * @param brand
+     */
+    @Override
+    public void add(Brand brand) {
+        brandDao.insertSelective(brand);
+    }
 
+    /**
+     * 根据id查询品牌
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Brand findOne(Long id) {
+        return brandDao.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 更新品牌数据
+     *
+     * @param brand
+     */
+    @Transactional
+    @Override
+    public void update(Brand brand) {
+        brandDao.updateByPrimaryKeySelective(brand);
+    }
+
+    /**
+     * 删除品牌信息
+     *
+     * @param ids
+     */
+    @Override
+    public void delete(Long[] ids) {
+        if (ids!=null&&ids.length>0){
+//            for (Long id :ids){
+//                brandDao.deleteByPrimaryKey(id);
+//            }
+            brandDao.deleteBatch(ids);
+        }
+    }
 }

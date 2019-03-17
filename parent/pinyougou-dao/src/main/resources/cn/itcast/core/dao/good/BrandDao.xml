@@ -183,4 +183,16 @@
       first_char = #{firstChar,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <!--批量删除-->
+  <!--delete from tb_brand where id in (1,2,3,4);-->
+  <delete id="deleteBatch" parameterType="Long[]">
+    DELETE FROM tb_brand
+    <where>
+      <foreach collection="array" open="id in (" separator="," close=")" item="id">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
 </mapper>
