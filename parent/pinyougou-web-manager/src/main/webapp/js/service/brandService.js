@@ -5,7 +5,7 @@ app.service("brandService",function($http){
 	}
 	
 	this.findPage = function(page,rows){
-		return $http.get("../brand/findPage.do?pageNum="+page+"&pageSize="+rows);
+		return $http.get("../brand/findPage.do?pageNo="+page+"&pageSize="+rows);
 	}
 	
 	this.add = function(entity){
@@ -25,7 +25,7 @@ app.service("brandService",function($http){
 	}
 	
 	this.search = function(page,rows,searchEntity){
-		return $http.post("../brand/search.do?pageNum="+page+"&pageSize="+rows,searchEntity);
+		return $http.post("../brand/search.do?pageNo="+page+"&pageSize="+rows,searchEntity);
 	}
 	
 	this.selectOptionList = function(){
