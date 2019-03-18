@@ -31,6 +31,7 @@ public interface BrandDao {
 
     /**
      * 批量删除
+     *
      * @param ids
      */
     void deleteBatch(Long[] ids);

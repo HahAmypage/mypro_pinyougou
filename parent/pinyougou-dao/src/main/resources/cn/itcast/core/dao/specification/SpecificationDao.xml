@@ -166,4 +166,15 @@
     set spec_name = #{specName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <!--批量删除-->
+  <delete id="deleteBatch" parameterType="Long[]">
+    DELETE FROM tb_specification
+    <where>
+      <foreach collection="array" open="id in (" separator="," close=")" item="id">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
 </mapper>

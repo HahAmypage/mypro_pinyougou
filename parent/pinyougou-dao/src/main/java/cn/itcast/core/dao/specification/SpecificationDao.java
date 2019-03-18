@@ -28,4 +28,10 @@ public interface SpecificationDao {
     int updateByPrimaryKeySelective(Specification record);
 
     int updateByPrimaryKey(Specification record);
+
+    /**
+     * 批量删除
+     * @param ids
+     */
+    void deleteBatch(Long[] ids);
 }

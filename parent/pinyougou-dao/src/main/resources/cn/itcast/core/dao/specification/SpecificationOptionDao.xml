@@ -198,4 +198,29 @@
       orders = #{orders,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--批量插入-->
+  <insert id="insertBatch" parameterType="list">
+    insert into tb_specification_option(option_name, spec_id,
+    orders) VALUES
+    <foreach collection="list" item="entity" separator="," >
+      (
+        #{entity.optionName},
+        #{entity.specId},
+        #{entity.orders}
+      )
+    </foreach>
+
+  </insert>
+
+
+  <!--批量删除-->
+  <delete id="deleteBatch" parameterType="Long[]">
+    DELETE  FROM  tb_specification_option
+    <where>
+      <foreach collection="array" open="spec_id in (" separator="," close=")" item="id">
+        #{id}
+      </foreach>
+    </where>
+  </delete>
 </mapper>
