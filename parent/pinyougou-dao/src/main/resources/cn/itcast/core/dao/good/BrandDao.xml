@@ -195,4 +195,9 @@
       </foreach>
     </where>
   </delete>
+
+  <!--模板新增的下拉框初始化-->
+  <select id="selectOptionList" resultType="map">
+    SELECT id,name text FROM tb_brand
+  </select>
 </mapper>

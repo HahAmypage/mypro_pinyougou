@@ -177,4 +177,9 @@
       </foreach>
     </where>
   </delete>
+
+    <!--模板新增的下拉列表初始化-->
+    <select id="selectOptionList" resultType="map">
+        SELECT id,spec_name text FROM tb_specification
+    </select>
 </mapper>

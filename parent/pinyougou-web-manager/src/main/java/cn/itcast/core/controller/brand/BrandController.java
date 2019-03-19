@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/brand")
@@ -72,5 +73,10 @@ public class BrandController {
             e.printStackTrace();
             return new Result(false,"删除失败");
         }
+    }
+
+    @RequestMapping("/selectOptionList")
+    public List<Map<String,String>>  selectOptionList(){
+        return brandService.selectOptionList();
     }
 }

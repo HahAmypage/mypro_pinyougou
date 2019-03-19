@@ -9,7 +9,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service
 public class TypeTemplateServiceImpl implements TypeTemplateService {
@@ -32,9 +31,41 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         if (typeTemplate.getName()!=null&& !"".equals(typeTemplate.getName().trim())){
             typeTemplateQuery.createCriteria().andNameLike(typeTemplate.getName());
         }
+        typeTemplateQuery.setOrderByClause("id desc");
         //查询
         Page<TypeTemplate> typeTemplatePage= (Page<TypeTemplate>) typeTemplateDao.selectByExample(typeTemplateQuery);
         //封装结果集
         return new PageResult(typeTemplatePage.getTotal(),typeTemplatePage.getResult());
+    }
+
+    /**
+     * 添加模板
+     *
+     * @param typeTemplate
+     */
+    @Override
+    public void add(TypeTemplate typeTemplate) {
+        typeTemplateDao.insertSelective(typeTemplate);
+    }
+
+    /**
+     * 修改回显-根据id查询
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public TypeTemplate findOne(Long id) {
+        return typeTemplateDao.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 保存修改
+     *
+     * @param typeTemplate
+     */
+    @Override
+    public void update(TypeTemplate typeTemplate) {
+        typeTemplateDao.updateByPrimaryKeySelective(typeTemplate);
     }
 }

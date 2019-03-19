@@ -4,6 +4,7 @@ import cn.itcast.core.pojo.entity.PageResult;
 import cn.itcast.core.pojo.good.Brand;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BrandService {
     /**
@@ -45,4 +46,10 @@ public interface BrandService {
      * @param id
      */
     void delete(Long[] id);
+
+    /**
+     * 新增模板-初始化信息
+     * @return
+     */
+    List<Map<String,String>> selectOptionList();
 }

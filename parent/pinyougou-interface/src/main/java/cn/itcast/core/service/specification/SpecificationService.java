@@ -5,6 +5,9 @@ import cn.itcast.core.pojo.specification.Specification;
 import cn.itcast.core.vo.SpecificationVo;
 import javafx.util.converter.LocalDateStringConverter;
 
+import java.util.List;
+import java.util.Map;
+
 public interface SpecificationService {
     /**
      * 显示规格的分页数据
@@ -34,6 +37,15 @@ public interface SpecificationService {
      */
     void update(SpecificationVo specificationVo);
 
-    //删除规格（同时删除规格选项）
+    /**
+     * //删除规格（同时删除规格选项）
+     * @param ids
+     */
     void delete(Long[] ids);
+
+    /**
+     * 新增模板-下拉框初始化
+     * @return
+     */
+    List<Map<String,String>> selectOptionList();
 }

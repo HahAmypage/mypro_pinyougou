@@ -14,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SpecificationServiceImpl implements SpecificationService{
@@ -114,6 +115,10 @@ public class SpecificationServiceImpl implements SpecificationService{
         }
     }
 
+    /**
+     * 批量删除
+     * @param ids
+     */
     @Override
     public void delete(Long[] ids) {
         if (ids!=null&& ids.length>0){
@@ -128,5 +133,15 @@ public class SpecificationServiceImpl implements SpecificationService{
             specificationOptionDao.deleteBatch(ids);
             specificationDao.deleteBatch(ids);
         }
+    }
+
+
+    /**
+     * 新增模板-下拉框初始化
+     * @return List<Map<String, String>>
+     */
+    @Override
+    public List<Map<String, String>> selectOptionList() {
+        return specificationDao.selectOptionList();
     }
 }

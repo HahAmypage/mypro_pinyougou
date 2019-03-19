@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BrandServiceImpl implements BrandService {
@@ -113,5 +114,15 @@ public class BrandServiceImpl implements BrandService {
 //            }
             brandDao.deleteBatch(ids);
         }
+    }
+
+    /**
+     * 新增模板-初始化信息
+     *
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> selectOptionList() {
+        return brandDao.selectOptionList();
     }
 }

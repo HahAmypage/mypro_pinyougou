@@ -92,7 +92,7 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	}
 	
 	$scope.specList={data:[]}
-	// 查询关联的品牌信息:
+	// 查询关联的规格信息:
 	$scope.findSpecList = function(){
 		specificationService.selectOptionList().success(function(response){
 			$scope.specList = {data:response};

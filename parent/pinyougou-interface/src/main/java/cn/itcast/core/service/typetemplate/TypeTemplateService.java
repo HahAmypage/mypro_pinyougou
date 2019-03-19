@@ -10,4 +10,23 @@ public interface TypeTemplateService {
      * 查询模板信息
      */
     PageResult search(Integer page, Integer rows, TypeTemplate typeTemplate);
+
+    /**
+     * 添加模板
+     * @param typeTemplate
+     */
+    void add(TypeTemplate typeTemplate);
+
+    /**
+     * 修改回显-根据id查询
+     * @param id
+     * @return
+     */
+    TypeTemplate findOne(Long id);
+
+    /**
+     * 保存修改
+     * @param typeTemplate
+     */
+    void update(TypeTemplate typeTemplate);
 }

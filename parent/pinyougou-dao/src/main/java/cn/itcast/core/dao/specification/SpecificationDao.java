@@ -5,6 +5,7 @@ import cn.itcast.core.pojo.specification.SpecificationQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SpecificationDao {
     int countByExample(SpecificationQuery example);
@@ -34,4 +35,10 @@ public interface SpecificationDao {
      * @param ids
      */
     void deleteBatch(Long[] ids);
+
+    /**
+     * 新增模板--拉下列表初始化
+     * @return
+     */
+    List<Map<String,String>> selectOptionList();
 }
