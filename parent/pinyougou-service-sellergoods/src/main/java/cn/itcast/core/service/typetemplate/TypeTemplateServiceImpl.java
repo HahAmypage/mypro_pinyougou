@@ -68,4 +68,19 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     public void update(TypeTemplate typeTemplate) {
         typeTemplateDao.updateByPrimaryKeySelective(typeTemplate);
     }
+
+    /**
+     * 删除模板
+     *
+     * @param ids
+     */
+    @Override
+    public void delete(Long[] ids) {
+        if (ids!=null&&ids.length>0){
+//            for (Long id:ids){
+//                typeTemplateDao.deleteByPrimaryKey(id);
+//            }
+            typeTemplateDao.deleteBatch(ids);
+        }
+    }
 }

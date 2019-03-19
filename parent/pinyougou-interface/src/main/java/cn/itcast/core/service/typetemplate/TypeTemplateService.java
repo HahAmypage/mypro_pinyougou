@@ -29,4 +29,10 @@ public interface TypeTemplateService {
      * @param typeTemplate
      */
     void update(TypeTemplate typeTemplate);
+
+    /**
+     * 删除模板
+     * @param ids
+     */
+    void delete(Long[] ids);
 }
