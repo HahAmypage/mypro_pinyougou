@@ -44,6 +44,7 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
+					alert(response.message);
 				}else{
 					alert(response.message);
 				}
