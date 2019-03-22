@@ -108,4 +108,7 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.deleteTableRow = function(index){
 		$scope.entity.customAttributeItems.splice(index,1);
 	}
-});	
+
+
+
+});

@@ -53,7 +53,7 @@ public class SellerServiceImpl implements SellerService {
         if (seller.getNickName()!=null&&!"".equals(seller.getNickName().trim())){
             criteria.andNickNameLike("%"+seller.getNickName().trim()+"%");
         }
-        if(seller.getStatus()!=null&&"1".equals(seller.getStatus().trim())){
+        if(seller.getStatus()!=null){
             criteria.andStatusEqualTo(seller.getStatus().trim());
         }
         sellerQuery.setOrderByClause("create_time desc");

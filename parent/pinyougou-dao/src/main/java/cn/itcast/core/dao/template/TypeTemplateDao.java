@@ -5,6 +5,7 @@ import cn.itcast.core.pojo.template.TypeTemplateQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TypeTemplateDao {
     int countByExample(TypeTemplateQuery example);
@@ -34,4 +35,10 @@ public interface TypeTemplateDao {
      * @param ids
      */
     void deleteBatch(Long[] ids);
+
+    /**
+     * 下拉框数据初始化
+     * @return
+     */
+    List<Map<String,String>> selectOptionList();
 }

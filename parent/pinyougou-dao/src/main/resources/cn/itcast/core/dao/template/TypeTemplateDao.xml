@@ -225,4 +225,10 @@
       </foreach>
     </where>
   </delete>
+
+
+  <!--商品分类新增，下拉框数据查询-->
+  <select id="selectOptionList" resultType="map">
+    SELECT id id,name text FROM tb_type_template
+  </select>
 </mapper>

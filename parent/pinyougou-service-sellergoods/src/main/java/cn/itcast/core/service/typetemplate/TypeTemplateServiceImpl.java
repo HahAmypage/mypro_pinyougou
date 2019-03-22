@@ -2,6 +2,7 @@ package cn.itcast.core.service.typetemplate;
 
 import cn.itcast.core.dao.template.TypeTemplateDao;
 import cn.itcast.core.pojo.entity.PageResult;
+import cn.itcast.core.pojo.item.ItemCat;
 import cn.itcast.core.pojo.template.TypeTemplate;
 import cn.itcast.core.pojo.template.TypeTemplateQuery;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -9,6 +10,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TypeTemplateServiceImpl implements TypeTemplateService {
@@ -82,5 +85,15 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 //            }
             typeTemplateDao.deleteBatch(ids);
         }
+    }
+
+    /**
+     * 查询数据--初始化下拉框
+     *
+     * @return
+     */
+    @Override
+    public List<TypeTemplate> findAll() {
+        return typeTemplateDao.selectByExample(null);
     }
 }

@@ -4,6 +4,9 @@ import cn.itcast.core.pojo.entity.PageResult;
 import cn.itcast.core.pojo.template.TypeTemplate;
 import com.alibaba.dubbo.config.annotation.Service;
 
+import java.util.List;
+import java.util.Map;
+
 public interface TypeTemplateService {
 
     /**
@@ -35,4 +38,10 @@ public interface TypeTemplateService {
      * @param ids
      */
     void delete(Long[] ids);
+
+    /**
+     * 查询数据--初始化下拉框
+     * @return
+     */
+    List<TypeTemplate> findAll();
 }

@@ -1,5 +1,5 @@
  //控制层 
-app.controller('itemCatController' ,function($scope,$controller   ,itemCatService){	
+app.controller('itemCatController' ,function($scope,$controller   ,itemCatService ,typeTemplateService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -30,31 +30,34 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 			}
 		);				
 	}
-	
+
+
 	//保存 
 	$scope.save=function(){				
 		var serviceObject;//服务层对象  				
 		if($scope.entity.id!=null){//如果有ID
-			serviceObject=itemCatService.update( $scope.entity ); //修改  
+			serviceObject=itemCatService.update( $scope.entity ); //修改
 		}else{
+			$scope.entity.parentId = $scope.pid;
 			serviceObject=itemCatService.add( $scope.entity  );//增加 
 		}				
 		serviceObject.success(
 			function(response){
 				if(response.flag){
-					//重新查询 
-		        	$scope.reloadList();//重新加载
+					//重新查询
+					alert(response.message);
+		        	$scope.findByParentId($scope.pid);//重新加载
 				}else{
 					alert(response.message);
 				}
 			}		
 		);				
 	}
-	
-	 
+
+
 	//批量删除 
 	$scope.dele=function(){			
-		//获取选中的复选框			
+		//获取选中的复选框
 		itemCatService.dele( $scope.selectIds ).success(
 			function(response){
 				if(response.flag){
@@ -76,17 +79,22 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 			}			
 		);
 	}
+
+    $scope.pid = 0;
 	
 	// 根据父ID查询分类
 	$scope.findByParentId =function(parentId){
 		itemCatService.findByParentId(parentId).success(function(response){
 			$scope.list=response;
+			$scope.pid = parentId
 		});
 	}
 	
 	// 定义一个变量记录当前是第几级分类
 	$scope.grade = 1;
-	
+
+
+
 	$scope.setGrade = function(value){
 		$scope.grade = value;
 	}
@@ -107,13 +115,17 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 		
 		$scope.findByParentId(p_entity.id);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+    // 查询关联的模板信息:
+	$scope.findTpyeTemplateList =  function () {
+		typeTemplateService.findAll().success(function (response) {
+			$scope.typeTemplateList = response;
+        })
+    }
+
 	
 	
 	
