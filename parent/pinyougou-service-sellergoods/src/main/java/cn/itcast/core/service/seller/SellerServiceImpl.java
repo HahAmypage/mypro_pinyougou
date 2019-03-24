@@ -8,6 +8,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -22,6 +23,7 @@ public class SellerServiceImpl implements SellerService {
      *
      * @param seller
      */
+    @Transactional
     @Override
     public void add(Seller seller) {
         seller.setStatus("0");
@@ -80,6 +82,7 @@ public class SellerServiceImpl implements SellerService {
      * @param sellerId
      * @param status
      */
+    @Transactional
     @Override
     public void updateStatus(String sellerId, String status) {
 

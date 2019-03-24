@@ -11,7 +11,7 @@ public class GoodsVo implements Serializable{
 
     private Goods goods;
     private GoodsDesc goodsDesc;
-    private List<Item> item;
+    private List<Item> itemList;
 
     public Goods getGoods() {
         return goods;
@@ -29,11 +29,11 @@ public class GoodsVo implements Serializable{
         this.goodsDesc = goodsDesc;
     }
 
-    public List<Item> getItem() {
-        return item;
+    public List<Item> getItemList() {
+        return itemList;
     }
 
-    public void setItem(List<Item> item) {
-        this.item = item;
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
     }
 }

@@ -39,4 +39,10 @@ public interface ItemCatService {
      * @param ids
      */
     void delete(Long[] ids);
+
+    /**
+     * 查询所有分类
+     * @return
+     */
+    List<ItemCat> findAll();
 }

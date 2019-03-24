@@ -44,4 +44,11 @@ public interface TypeTemplateService {
      * @return
      */
     List<TypeTemplate> findAll();
+
+    /**
+     * 根据模板id查找规格选项
+     * @param id
+     * @return
+     */
+    List<Map> findBySpecList(Long id);
 }

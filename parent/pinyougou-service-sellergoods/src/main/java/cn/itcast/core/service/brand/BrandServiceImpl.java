@@ -74,6 +74,7 @@ public class BrandServiceImpl implements BrandService {
      * 新增品牌
      * @param brand
      */
+    @Transactional
     @Override
     public void add(Brand brand) {
         brandDao.insertSelective(brand);
@@ -106,6 +107,7 @@ public class BrandServiceImpl implements BrandService {
      *
      * @param ids
      */
+    @Transactional
     @Override
     public void delete(Long[] ids) {
         if (ids!=null&&ids.length>0){

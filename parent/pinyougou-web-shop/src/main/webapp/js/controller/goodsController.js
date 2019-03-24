@@ -96,7 +96,8 @@ app.controller('goodsController' ,function($scope,$controller,$location,typeTemp
 		goodsService.dele( $scope.selectIds ).success(
 			function(response){
 				if(response.flag){
-					$scope.reloadList();//刷新列表
+					//这里使用的是上级分类
+					$scope.findByParentId(0);//刷新列表
 					$scope.selectIds = [];
 				}						
 			}		

@@ -198,4 +198,13 @@
       type_id = #{typeId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--批量删除-->
+  <!--delete from tb_item_cat where id in (1,2,3)-->
+  <delete id="BatchDeleteByPrimaryKey" parameterType="Long[]">
+    DELETE FROM tb_item_cat
+    <foreach collection="array" item="id" open="id in (" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
 </mapper>

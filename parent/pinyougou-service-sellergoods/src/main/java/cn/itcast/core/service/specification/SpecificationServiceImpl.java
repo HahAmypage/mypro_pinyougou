@@ -11,6 +11,7 @@ import cn.itcast.core.vo.SpecificationVo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -48,6 +49,7 @@ public class SpecificationServiceImpl implements SpecificationService{
      *
      * @param specificationVo
      */
+    @Transactional
     @Override
     public void add(SpecificationVo specificationVo) {
         //保存规格数据，插入数据后要返回自增主键id
@@ -96,6 +98,7 @@ public class SpecificationServiceImpl implements SpecificationService{
      *
      * @param specificationVo
      */
+    @Transactional
     @Override
     public void update(SpecificationVo specificationVo) {
         //保存规格数据，返回自增id
@@ -119,6 +122,7 @@ public class SpecificationServiceImpl implements SpecificationService{
      * 批量删除
      * @param ids
      */
+    @Transactional
     @Override
     public void delete(Long[] ids) {
         if (ids!=null&& ids.length>0){

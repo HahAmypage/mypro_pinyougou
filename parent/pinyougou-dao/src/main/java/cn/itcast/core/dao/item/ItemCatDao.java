@@ -28,4 +28,10 @@ public interface ItemCatDao {
     int updateByPrimaryKeySelective(ItemCat record);
 
     int updateByPrimaryKey(ItemCat record);
+
+    /**
+     * 批量删除
+     * @param ids
+     */
+    void BatchDeleteByPrimaryKey(Long[] ids);
 }

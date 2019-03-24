@@ -84,4 +84,9 @@ public class ItemCatController {
             return new Result(false,"删除失败");
         }
     }
+
+    @RequestMapping("/findAll.do")
+    public List<ItemCat> findAll(){
+        return itemCatService.findAll();
+    }
 }
