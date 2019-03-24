@@ -128,9 +128,10 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
                 specificationOptionQuery.createCriteria().andSpecIdEqualTo(specId);
                 List<SpecificationOption> specificationOptions = specificationOptionDao.selectByExample(specificationOptionQuery);
 
+                //{"id":16,"text":"TCL","option":"specificationOptions"}
                 map.put("options",specificationOptions);
             }
-
+//[{"id":16,"text":"TCL","option":"specificationOptions"},{"id":13,"text":"长虹","option":"specificationOptions"},{"id":14,"text":"海尔","option":"specificationOptions"}]
             return specList;
         }
         return null;

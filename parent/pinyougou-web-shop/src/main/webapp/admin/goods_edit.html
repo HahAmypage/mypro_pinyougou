@@ -171,7 +171,8 @@
                            
                             <!--扩展属性-->
                             <div class="tab-pane" id="customAttribute">
-                                <div class="row data-type">                                
+                                <div class="row data-type">
+									<!--[{"text":"内存大小"},{"text":"颜色"}]-->
 	                                <div ng-repeat="pojo in entity.goodsDesc.customAttributeItems">
 		                                <div class="col-md-2 title">{{pojo.text}}</div>
 				                        <div class="col-md-10 data">
@@ -196,10 +197,12 @@
 	                                <div class="row data-type">
 	                                
 		                                <div ng-repeat="pojo in specList">
+											<!--pojo--》{"id":14,"text":"海尔","options":"specificationOptions"}-->
 			                                <div class="col-md-2 title">{{pojo.text}}</div>
 					                        <div class="col-md-10 data">
 					                               
 					                            <span ng-repeat="option in pojo.options">
+													<!--"options":"specificationOptions"-->
 					                            	<input ng-checked="checkAttributeValue(pojo.text,option.optionName)" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()" type="checkbox" >{{option.optionName}}					                            				                            	
 					                            </span>  	
 					                            	
