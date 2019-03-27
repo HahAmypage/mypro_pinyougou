@@ -5,6 +5,7 @@ import cn.itcast.core.pojo.entity.Result;
 import cn.itcast.core.pojo.item.ItemCat;
 import cn.itcast.core.pojo.item.ItemCatQuery;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -15,6 +16,9 @@ public class ItemCatServiceImpl implements ItemCatService {
 
     @Resource
     private ItemCatDao itemCatDao;
+
+    @Resource
+    private RedisTemplate redisTemplate;
     /**
      * 根据parentID 查询
      *
@@ -23,6 +27,15 @@ public class ItemCatServiceImpl implements ItemCatService {
      */
     @Override
     public List<ItemCat> findByParentId(Long parentId) {
+        //缓存分类信息（把分类名称和模板id）
+        List<ItemCat> itemCatList = itemCatDao.selectByExample(null);
+        if (itemCatList!=null&&itemCatList.size()>0){
+            for (ItemCat itemCat : itemCatList){
+                redisTemplate.boundHashOps("itemCat").put(itemCat.getName(),itemCat.getTypeId());
+            }
+        }
+
+        //设置查询条件
         ItemCatQuery itemCatQuery = new ItemCatQuery();
         itemCatQuery.createCriteria().andParentIdEqualTo(parentId);
         return itemCatDao.selectByExample(itemCatQuery);
@@ -92,7 +105,7 @@ public class ItemCatServiceImpl implements ItemCatService {
                         }
 //                        itemCatDao.deleteByPrimaryKey(id);
                     }
-                    //TODO:待测试
+                    //批量删除
                     itemCatDao.BatchDeleteByPrimaryKey(ids);
                 }
             }

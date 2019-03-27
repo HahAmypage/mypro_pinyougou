@@ -19,6 +19,9 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.opensaml.xml.signature.G;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -46,6 +49,10 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Resource
     public SellerDao sellerDao;
+
+    @Resource
+    private SolrTemplate solrTemplate;
+
     /**
      * 保存商品
      *
@@ -212,9 +219,35 @@ public class GoodsServiceImpl implements GoodsService {
             for (Long id:ids){
                 goods.setId(id);
                 goodsDao.updateByPrimaryKeySelective(goods);
-                //TODO: 2、添加到索引库
-                //TODO：3、生成静态页面
+                if ("1".equals(status)){
+                    //2、添加到索引库
+                    dataImportSolr();
+
+                    //TODO：3、生成静态页面
+                }
             }
+        }
+    }
+
+    //添加商品信息到solr（注意这里只是把所有状态正常的商品添加进去）
+    private void dataImportSolr() {
+        //根据商品的id查询所有审核成功的item
+        ItemQuery itemQuery = new ItemQuery();
+        //这里使用正常状态为1的条件是为了后面搜索有更多数据，
+        // 正常情况应该是勾选了哪个商品就只添加哪个商品到索引
+        itemQuery.createCriteria().andStatusEqualTo("1");
+        List<Item> itemList = itemDao.selectByExample(itemQuery);
+        if(itemList!=null&&itemList.size()>0){
+            for (Item item:itemList){
+                //处理一下规格，item中的spec{"机身内存":"16G","网络":"联通3G"}
+                Map<String,String> map = JSON.parseObject(item.getSpec(), Map.class);
+                //把处理好的规格信息，封装到item的specMap（刚刚新增的字段）
+                item.setSpecMap(map);
+            }
+            //添加到索引库
+            solrTemplate.saveBeans(itemList);
+            //提交
+            solrTemplate.commit();
         }
     }
 

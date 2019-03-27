@@ -9,7 +9,8 @@ app.controller("contentController",function($scope,contentService){
 	
 	//搜索  （传递参数）
 	$scope.search=function(){
-		location.href="http://localhost:9103/search.html#?keywords="+$scope.keywords;
+		//注意这里的端口是自己portal的
+		location.href="http://localhost:23003/search.html#?keywords="+$scope.keywords;
 	}
 	
 });

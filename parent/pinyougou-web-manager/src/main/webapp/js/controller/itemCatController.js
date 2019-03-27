@@ -61,7 +61,7 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 		itemCatService.dele( $scope.selectIds ).success(
 			function(response){
 				if(response.flag){
-					$scope.findByParentId(0);//刷新列表
+					$scope.findByParentId($scope.pid);//刷新列表
 					$scope.selectIds = [];
 				}						
 			}		

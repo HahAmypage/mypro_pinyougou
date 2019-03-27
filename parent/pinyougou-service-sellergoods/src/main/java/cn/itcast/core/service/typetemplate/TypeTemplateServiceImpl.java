@@ -12,6 +12,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -26,6 +27,9 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
     @Resource
     private SpecificationOptionDao specificationOptionDao;
+
+    @Resource
+    private RedisTemplate redisTemplate;
     /**
      * 查询模板信息
      *
@@ -35,6 +39,19 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
      */
     @Override
     public PageResult search(Integer page, Integer rows, TypeTemplate typeTemplate) {
+        //缓存模板信息（放入redis）
+        List<TypeTemplate> typeTemplateList = typeTemplateDao.selectByExample(null);
+        if (typeTemplateList!=null&&typeTemplateList.size()>0){
+            for (TypeTemplate typeTemplate1:typeTemplateList){
+                //缓存模板id--品牌信息
+                List<Map> brandMap = JSON.parseArray(typeTemplate1.getBrandIds(), Map.class);
+                redisTemplate.boundHashOps("brandList").put(typeTemplate1.getId(),brandMap);
+                //缓存模板id--规格信息
+                List<Map> specMap = findBySpecList(typeTemplate1.getId());
+                redisTemplate.boundHashOps("specList").put(typeTemplate1.getId(),specMap);
+            }
+        }
+
         //设置分页条件
         PageHelper.startPage(page,rows);
         //设置查询条件
