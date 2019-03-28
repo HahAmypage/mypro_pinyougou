@@ -2,18 +2,19 @@ package cn.itcast.core.service.search;
 
 import cn.itcast.core.pojo.good.Brand;
 import cn.itcast.core.pojo.item.Item;
+import cn.itcast.core.pojo.order.OrderQuery;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Filter;
 
 @Service
 public class ItemSearchServiceimpl implements ItemSearchService{
@@ -96,6 +97,10 @@ public class ItemSearchServiceimpl implements ItemSearchService{
     private Map<String,Object> searchHighlightForPage(Map<String,String> map){
         //设置查询条件
         String keywords = map.get("keywords");
+        //处理关键字的空格
+        keywords = keywords.replaceAll(" ", "");
+        //替换为无空格的关键字
+        map.put("keywords",keywords);
         Criteria criteria = new Criteria("item_keywords");
         if (keywords!=null&&!"".equals(keywords)){
             criteria.is(keywords);
@@ -113,6 +118,55 @@ public class ItemSearchServiceimpl implements ItemSearchService{
         highlightOptions.setSimplePrefix("<font color='red'>");
         highlightOptions.setSimplePostfix("</font>");
         highlightQuery.setHighlightOptions(highlightOptions);
+
+        //条件过滤
+        // 1)根据类别过滤
+        String category = map.get("category");
+        if(category!=null&&!"".equals(category)){
+            Criteria criteriaCategory = new Criteria("item_category");
+            criteriaCategory.is(category);
+            //注意criteria要加到Query中
+            SimpleFilterQuery simpleFilterQuery = new SimpleFilterQuery(criteriaCategory);
+            highlightQuery.addFilterQuery(simpleFilterQuery);
+        }
+
+        // 2)根据品牌过滤
+        String brand = map.get("brand");
+        if (brand!=null&&!"".equals(brand)){
+            Criteria criteria1Brand = new Criteria("item_brand");
+            criteria1Brand.is(brand);
+            SimpleFilterQuery simpleFilterQuery = new SimpleFilterQuery(criteria1Brand);
+            highlightQuery.addFilterQuery(simpleFilterQuery);
+        }
+
+        // 3)根据规格过滤
+        String specList = map.get("spec");
+        if (specList!=null&&!"".equals(specList)){
+            //{"机身内存":"16G","网络":"联通3G"}
+            Map<String,String> specMap = JSON.parseObject(specList, Map.class);
+            Set<Map.Entry<String, String>> entries = specMap.entrySet();
+            for (Map.Entry<String,String> entry:entries){
+                Criteria criteriaSpec = new Criteria("item_spec_"+entry.getKey());
+                criteriaSpec.is(entry.getValue());
+                SimpleFilterQuery simpleFilterQuery = new SimpleFilterQuery(criteriaSpec);
+                highlightQuery.addFilterQuery(simpleFilterQuery);
+            }
+        }
+
+        //关键字搜索之排序
+        String sortField = map.get("sortField");
+        String sortMode = map.get("sort");
+        if (sortMode!=null&&!"".equals(sortMode)){
+            if ("ASC".equals(sortMode)){
+                Sort sort = new Sort(Sort.Direction.ASC,"item_"+sortField);
+                highlightQuery.addSort(sort);
+            }else {
+                Sort sort = new Sort(Sort.Direction.DESC,"item_"+sortField);
+                highlightQuery.addSort(sort);
+            }
+        }
+
+
         //查询
         HighlightPage<Item> highlightPage = solrTemplate.queryForHighlightPage(highlightQuery, Item.class);
         //处理高亮结果集

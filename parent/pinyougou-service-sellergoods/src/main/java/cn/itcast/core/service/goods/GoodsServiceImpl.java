@@ -221,15 +221,27 @@ public class GoodsServiceImpl implements GoodsService {
                 goodsDao.updateByPrimaryKeySelective(goods);
                 if ("1".equals(status)){
                     //2、添加到索引库
-                    dataImportSolr();
-
+                    //dataImportSolr();
+                    ItemQuery itemQuery = new ItemQuery();
+                    itemQuery.createCriteria().andGoodsIdEqualTo(id);
+                    List<Item> itemList = itemDao.selectByExample(itemQuery);
+                    if (itemList!=null&&itemList.size()>0){
+                        for (Item item:itemList){
+                            //处理规格：{"机身内存":"16G","网络":"联通3G"}
+                            Map<String,String> map = JSON.parseObject(item.getSpec(), Map.class);
+                            item.setSpecMap(map);
+                        }
+                        //添加到索引库
+                        solrTemplate.saveBeans(itemList);
+                        solrTemplate.commit();
+                    }
                     //TODO：3、生成静态页面
                 }
             }
         }
     }
 
-    //添加商品信息到solr（注意这里只是把所有状态正常的商品添加进去）
+    //添加商品信息到solr（注意这里只是把所有状态正常的商品添加进去,已弃用）
     private void dataImportSolr() {
         //根据商品的id查询所有审核成功的item
         ItemQuery itemQuery = new ItemQuery();
