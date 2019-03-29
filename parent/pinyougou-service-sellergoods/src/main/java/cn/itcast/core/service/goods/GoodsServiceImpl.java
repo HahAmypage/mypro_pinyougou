@@ -13,18 +13,26 @@ import cn.itcast.core.pojo.good.GoodsDesc;
 import cn.itcast.core.pojo.good.GoodsQuery;
 import cn.itcast.core.pojo.item.Item;
 import cn.itcast.core.pojo.item.ItemQuery;
+import cn.itcast.core.service.staticpage.StaticPageService;
 import cn.itcast.core.vo.GoodsVo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.opensaml.xml.signature.G;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +60,15 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Resource
     private SolrTemplate solrTemplate;
+
+//    @Resource
+//    private StaticPageService staticPageService;
+
+    @Resource
+    private JmsTemplate jmsTemplate;
+
+    @Resource
+    private ActiveMQTopic topicPageAndSolrDestination;
 
     /**
      * 保存商品
@@ -95,6 +112,7 @@ public class GoodsServiceImpl implements GoodsService {
                 item.setTitle(title);
                 item.setPrice(goods.getPrice());
                 item.setNum(100);
+                item.setIsDefault("1");
                 item.setSpec("{}");
                 setAttributeForItem(goods, goodsDesc, item);
                 itemDao.insertSelective(item);
@@ -216,30 +234,28 @@ public class GoodsServiceImpl implements GoodsService {
         if (ids!=null&&ids.length>0){
             Goods goods = new Goods();
             goods.setAuditStatus(status);
-            for (Long id:ids){
+            for ( final Long id:ids){
                 goods.setId(id);
                 goodsDao.updateByPrimaryKeySelective(goods);
                 if ("1".equals(status)){
                     //2、添加到索引库
                     //dataImportSolr();
-                    ItemQuery itemQuery = new ItemQuery();
-                    itemQuery.createCriteria().andGoodsIdEqualTo(id);
-                    List<Item> itemList = itemDao.selectByExample(itemQuery);
-                    if (itemList!=null&&itemList.size()>0){
-                        for (Item item:itemList){
-                            //处理规格：{"机身内存":"16G","网络":"联通3G"}
-                            Map<String,String> map = JSON.parseObject(item.getSpec(), Map.class);
-                            item.setSpecMap(map);
+                    //saveItemToSolr(id);
+                    //3、生成静态页面
+                    //staticPageService.getHtml(id);
+                    jmsTemplate.send(topicPageAndSolrDestination, new MessageCreator() {
+                        @Override
+                        public Message createMessage(Session session) throws JMSException {
+                            //session：封装消息体（文本消息、map格式消息）
+                            TextMessage textMessage = session.createTextMessage(String.valueOf(id));
+                            return textMessage;
                         }
-                        //添加到索引库
-                        solrTemplate.saveBeans(itemList);
-                        solrTemplate.commit();
-                    }
-                    //TODO：3、生成静态页面
+                    });
                 }
             }
         }
     }
+
 
     //添加商品信息到solr（注意这里只是把所有状态正常的商品添加进去,已弃用）
     private void dataImportSolr() {
@@ -300,6 +316,7 @@ public class GoodsServiceImpl implements GoodsService {
      *
      * @param ids
      */
+    @Transactional
     @Override
     public void delete(Long[] ids) {
         if (ids!=null&&ids.length>0){
@@ -308,6 +325,10 @@ public class GoodsServiceImpl implements GoodsService {
             for (Long id : ids){
                 goods.setId(id);
                 goodsDao.updateByPrimaryKeySelective(goods);
+                //商品下架
+                SimpleQuery simpleQuery = new SimpleQuery("item_goodsid:"+id);
+                solrTemplate.delete(simpleQuery);
+                solrTemplate.commit();
             }
         }
     }

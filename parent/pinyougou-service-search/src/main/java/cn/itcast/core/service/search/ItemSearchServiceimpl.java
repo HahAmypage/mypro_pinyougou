@@ -1,7 +1,9 @@
 package cn.itcast.core.service.search;
 
+import cn.itcast.core.dao.item.ItemDao;
 import cn.itcast.core.pojo.good.Brand;
 import cn.itcast.core.pojo.item.Item;
+import cn.itcast.core.pojo.item.ItemQuery;
 import cn.itcast.core.pojo.order.OrderQuery;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
@@ -24,6 +26,36 @@ public class ItemSearchServiceimpl implements ItemSearchService{
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private ItemDao itemDao;
+
+
+    /**
+     * @Author chenyingxin
+     * @Descristion 商品上架-保存到索引库
+     * @Date 10:43 2019/3/29
+     * @param id
+     * @return void
+     */
+    @Override
+    public void addItemToSolr(Long id) {
+        ItemQuery itemQuery = new ItemQuery();
+        //根据id查询状态正常，并且默认（只显示多个规格中勾选默认的一项），以及库存大于0的商品
+        itemQuery.createCriteria().andGoodsIdEqualTo(id).andStatusEqualTo("1").andIsDefaultEqualTo("1").andNumGreaterThan(0);
+        List<Item> itemList = itemDao.selectByExample(itemQuery);
+        if (itemList!=null&&itemList.size()>0){
+            for (Item item:itemList){
+                //处理规格：{"机身内存":"16G","网络":"联通3G"}
+                Map<String,String> map = JSON.parseObject(item.getSpec(), Map.class);
+                item.setSpecMap(map);
+            }
+            //添加到索引库
+            solrTemplate.saveBeans(itemList);
+            solrTemplate.commit();
+        }
+    }
+
 
     /**
      * 前台系统-商品检索

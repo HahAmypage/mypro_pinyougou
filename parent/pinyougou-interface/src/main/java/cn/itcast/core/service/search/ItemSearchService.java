@@ -4,6 +4,21 @@ import java.util.Map;
 
 public interface ItemSearchService {
 
-    //商品检索并分页
+    /*/**
+     * @Author chenyingxin
+     * @Descristion 商品检索并分页
+     * @Date 10:40 2019/3/29
+     * @param searchMap
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     */
     Map<String,Object> search(Map<String,String> searchMap);
+
+    /*/**
+     * @Author chenyingxin
+     * @Descristion 商品上架-保存到索引库
+     * @Date 10:39 2019/3/29
+     * @param id
+     * @return void
+     */
+    void addItemToSolr(Long id);
 }
