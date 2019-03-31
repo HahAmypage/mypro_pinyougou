@@ -19,6 +19,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.opensaml.xml.signature.G;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -29,10 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +67,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Resource
     private ActiveMQTopic topicPageAndSolrDestination;
+
+    @Resource
+    private Destination queueSolrDeleteDestination;
 
     /**
      * 保存商品
@@ -322,13 +323,23 @@ public class GoodsServiceImpl implements GoodsService {
         if (ids!=null&&ids.length>0){
             Goods goods = new Goods();
             goods.setIsDelete("1");
-            for (Long id : ids){
+            for (final Long id : ids){
                 goods.setId(id);
                 goodsDao.updateByPrimaryKeySelective(goods);
                 //商品下架
-                SimpleQuery simpleQuery = new SimpleQuery("item_goodsid:"+id);
-                solrTemplate.delete(simpleQuery);
-                solrTemplate.commit();
+//                SimpleQuery simpleQuery = new SimpleQuery("item_goodsid:"+id);
+//                solrTemplate.delete(simpleQuery);
+//                solrTemplate.commit();
+
+                //生产者把商品id加到队列
+                jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+                    @Override
+                    public Message createMessage(Session session) throws JMSException {
+                        TextMessage textMessage = session.createTextMessage(String.valueOf(id));
+                        return textMessage;
+                    }
+                });
+
             }
         }
     }

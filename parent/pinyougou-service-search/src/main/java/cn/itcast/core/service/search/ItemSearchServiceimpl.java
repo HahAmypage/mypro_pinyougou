@@ -56,6 +56,20 @@ public class ItemSearchServiceimpl implements ItemSearchService{
         }
     }
 
+    /**
+     * @param id
+     * @return void
+     * @Author chenyingxin
+     * @Descristion 商品下架
+     * @Date 16:37 2019/3/30
+     */
+    @Override
+    public void deleteItemToSolr(Long id) {
+        SimpleQuery simpleQuery = new SimpleQuery("item_goodsid:"+id);
+        solrTemplate.delete(simpleQuery);
+        solrTemplate.commit();
+    }
+
 
     /**
      * 前台系统-商品检索
