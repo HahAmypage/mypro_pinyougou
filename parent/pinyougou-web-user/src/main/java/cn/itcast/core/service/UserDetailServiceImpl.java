@@ -2,8 +2,6 @@ package cn.itcast.core.service;
 
 import cn.itcast.core.pojo.seller.Seller;
 import cn.itcast.core.service.seller.SellerService;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.alibaba.dubbo.config.annotation.Service;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -14,7 +12,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDetailServiceImpl implements UserDetailsService{
+/**
+ * @ClassName UserDetailServiceImpl
+ * @Description 登录授权
+ * @Author chenyingxin
+ * @Date 20:21 2019/3/31
+ * @Version 2.1
+ */
+public class UserDetailServiceImpl implements UserDetailsService {
 
     /**
      * Locates the user based on the username. In the actual implementation, the search
@@ -36,6 +41,5 @@ public class UserDetailServiceImpl implements UserDetailsService{
         grantedAuthoritySet.add(authority);
         User user = new User(username,"",grantedAuthoritySet);
         return user;
-
     }
 }

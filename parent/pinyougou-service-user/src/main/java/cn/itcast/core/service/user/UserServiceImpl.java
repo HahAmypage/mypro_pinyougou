@@ -1,12 +1,18 @@
 package cn.itcast.core.service.user;
 
+import cn.core.itcast.utils.md5.MD5Util;
+import cn.itcast.core.dao.user.UserDao;
+import cn.itcast.core.pojo.user.User;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import javax.annotation.Resource;
 import javax.jms.*;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -25,6 +31,12 @@ public class UserServiceImpl implements UserService {
     @Resource
     private Destination smsDestination;
 
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private UserDao userDao;
+
     /**
      * @param phone
      * @return void
@@ -38,6 +50,12 @@ public class UserServiceImpl implements UserService {
         // 验证码
         final String code = RandomStringUtils.randomNumeric(6);
 
+        System.out.println(code);
+
+        redisTemplate.boundValueOps(phone).set(code);
+        //设置验证码过期时间
+        redisTemplate.boundValueOps(phone).expire(5, TimeUnit.MINUTES);
+
         // 将数据发送到mq中
         jmsTemplate.send(smsDestination, new MessageCreator() {
             @Override
@@ -50,5 +68,23 @@ public class UserServiceImpl implements UserService {
                 return mapMessage;
             }
         });
+    }
+
+    @Override
+    public void add(String smscode, User user) {
+        //根据用户手机号到redis查找验证
+        String code = (String) redisTemplate.boundValueOps(user.getPhone()).get();
+        if (smscode!=null&&!"".equals(smscode)&&smscode.equals(code)){
+            //验证码验证成功
+            //注册
+            //对用户密码加密再注册（MD5）
+            String md5Encode = MD5Util.MD5Encode(user.getPassword(),null);
+            user.setPassword(md5Encode);
+            user.setCreated(new Date());
+            user.setUpdated(new Date());
+            userDao.insertSelective(user);
+        }else {
+            throw new RuntimeException("验证码不正确");
+        }
     }
 }
