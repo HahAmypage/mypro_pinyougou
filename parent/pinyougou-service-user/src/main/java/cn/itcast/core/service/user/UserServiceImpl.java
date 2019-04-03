@@ -62,8 +62,9 @@ public class UserServiceImpl implements UserService {
             public Message createMessage(Session session) throws JMSException {
                 MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString("phoneNumbers", phone);
-                mapMessage.setString("signName", "阮文");
-                mapMessage.setString("templateCode", "SMS_140720901");
+                mapMessage.setString("signName", "莹芯");
+//                mapMessage.setString("templateCode", "SMS_140720901");
+                mapMessage.setString("templateCode","SMS_162547815");
                 mapMessage.setString("templateParam", "{\"code\":\""+code+"\"}");
                 return mapMessage;
             }
